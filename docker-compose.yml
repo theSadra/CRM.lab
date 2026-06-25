@@ -1,0 +1,33 @@
+services:
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_DATABASE: espocrm
+      MARIADB_USER: espocrm
+      MARIADB_PASSWORD: espopass
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  espocrm:
+    image: espocrm/espocrm
+    depends_on:
+      - mariadb
+    environment:
+      ESPOCRM_DATABASE_HOST: mariadb
+      ESPOCRM_DATABASE_NAME: espocrm
+      ESPOCRM_DATABASE_USER: espocrm
+      ESPOCRM_DATABASE_PASSWORD: espopass
+    ports:
+      - "8080:80"
+
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  mariadb_data:
+  n8n_data:
